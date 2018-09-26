@@ -1,0 +1,642 @@
+\documentclass[journal,twoside]{IEEEtran}
+
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.pdf,.jpeg,.png}
+
+\usepackage[cmex10]{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\interdisplaylinepenalty=2500
+
+\newcommand{\dd}{\,\mathrm{d}}
+\usepackage{cite}
+\DeclareMathOperator{\arcsinh}{arcsinh}
+\DeclareMathOperator{\arctanh}{arctanh}
+\DeclareMathOperator{\sinc}{sinc}
+
+\begin{document}
+
+\title{Analysis of Relationship between Continuous Time Fourier Transform (CTFT), Discrete Time Fourier Transform (DTFT), Fourier Series (FS), and Discrete Fourier Transform (DFT)}
+
+\author{Sizhuang~Liang}
+
+\maketitle
+
+\begin{abstract}
+This paper analyzes the relationship between Continuous Time Fourier Transform (CTFT), Discrete Time Fourier Transform (DTFT), Fourier Series (FS), and Discrete Fourier Transform (DFT). With the introduction of the continuous form of a discrete-time signal, it is possible to uniformly express CTFT, DTFT, FS, and DFT in terms of CTFT. DTFT is CTFT adapted for discrete-time signals, FS is CTFT adapted for periodic continuous-time signals, and DFT is CTFT adapted for periodic discrete-time signals. CTFT, DTFT, FS, and DFT can be tied together by the properties of Dirac delta combs (or impulse trains) and the Poisson's summation formula. Discreteness and periodicity plays a critical roles in the transformation between CTFT, DTFT, FS, and DFT. It turns out that discreteness in the time domain translates to periodicity in the frequency domain, whereas periodicity in the time domain translates to discreteness in the frequency domain. This paper also discusses the conventions of Fourier transforms because it will be hard to unify CTFT, DTFT, FS, and DFT unless the same convention is used for all of them. This paper concludes with a brief discussion of the meaning of DFT in signal processing.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Continuous-time Fourier transform, discrete-time Fourier transform, Fourier series, discrete Fourier transform, discreteness, periodicity
+\end{IEEEkeywords}
+
+
+\section{Introduction}
+
+\IEEEPARstart{W}{hen} learning signal processing, a major difficulty is to understand and remember the expressions for Continuous Time Fourier Transform (CTFT), Discrete Time Fourier Transform (DTFT), Fourier Series (FS), Discrete Fourier Transform (DFT), and their inverse transforms. These transforms are usually introduced and analyzed separately.
+
+There has been efforts to analyze the relationship between these transforms \cite{ref:Bracewell, ref:Lindegren, ref:Tjoa, ref:Fernsanz}. In fact, the work in \cite{ref:Fernsanz} talked about the relationship between DTFT and CTFT. In fact, with a proper selection of convention and the introduction of the continuous form of a discrete-time signal, we can show that DTFT can be obtained from CTFT, and FS can be derived from CTFT. DFT can be derived from DTFT and FS, and eventually from CTFT. In fact, all these transforms can be unified and they are essentially the same transform. The differentiation of CTFT, DTFT, FS, and DFT is due to the need to adapt CTFT for discrete-time signals and periodic signals.
+
+This paper starts with a brief discussion on sampling and interpolation, and introduces the concept of the continuous form of a discrete-time signal. In Section \ref{sec:CTFT}, we discuss CTFT and its various conventions. We then proceed with detailed derivation on DTFT, FS, and DFT. In Section \ref{sec:expressions}, we summarize the expressions for the four transforms and point out their connection. In Section \ref{sec:Discreteness_and_Periodicity}, we prove the connection between discreteness and periodicity. Finally, in Section \ref{sec:DFT_in_Signal_Processing}, we conclude with a brief discussion on the meaning of DFT on a sampled signal with a limited duration.
+
+\section{Continuous-Time and Discrete-Time Signals}
+
+A signal is a function with respect to time. In this paper, a general function is expressed by $f(x)$ with $x$ being the argument, whereas a signal is expressed by $x(t)$ with $t$ being the time. Signals can be continuous or discrete with respect to time. For example, $x(t), t\in\mathbb{R}$ is a continuous-time signal, whereas $x[n], n\in\mathbb{N}$ is a discrete-time signal. A discrete signal is also called a sequence. One of the reasons we have CTFT, DTFT, FS, and DFT is because we have continuous-time and discrete-time signals. To be specific, CTFT and FS are defined for continuous-time signals, whereas DTFT and DFT are defined for discrete-time signals. As we will see in this paper, in order to explore the relationship between the four types of Fourier transforms, we need to somehow relate continuous-time signals to discrete-time signals.
+
+
+
+\subsection{Sampling}
+
+Discrete-time signals can be obtained by taking samples of continuous-time signals. If we sample $x(t)$ with a sampling period of $T_s$, we can obtain a discrete-time signal
+\begin{equation}
+x[n] = x(T_s n), n\in\mathbb{N}.
+\end{equation}
+$T_s$ is called a sampling period because sampling is a periodic operation, and a sample is taken every $T_s$ second(s). $T_s$ is also called a sampling interval because it is the time interval between samples. As a result, we can also denote $T_s$ by $\Delta t$.
+
+Sampling is not restricted to functions with respect to time. In fact, for any function $f(x)$, we can sample the function by $f[n] = f(n \Delta x)$, where $\Delta x$ is the sampling interval. In this case, it is not appropriate to denote the sampling interval by $T_s$, since $T$ stands for a period of time. In this situation, one can probably use $X_s$ to refer to the sampling period.
+
+
+Another way to sample a continuous-time signal $x(t)$ is to multiple $x(t)$ with a scaled Dirac comb function. A Dirac comb function, also called an impulse train, is defined by
+\begin{equation}
+\mathrm{III}(t)=\sum_{n=-\infty}^{\infty}\delta(t-n),
+\end{equation}
+where $\delta(t)$ is the Dirac delta function. If the sampling interval is $T_s$, we can scale the Dirac comb function as follow
+\begin{equation}
+\frac{1}{T_s}\mathrm{III}(\frac{t}{T_s}) = \sum_{n=-\infty}^{\infty}\delta(t-T_s n).
+\end{equation}
+Sampling $x(t)$ can be achieved by
+\begin{IEEEeqnarray}{rCl}
+x_d(t) &=& x(t)\frac{1}{T_s}\mathrm{III}(\frac{t}{T_s})\nonumber\\
+&=& x(t)\sum_{n=-\infty}^{\infty}\delta(t-T_s n)\nonumber\\
+&=& \sum_{n=-\infty}^{\infty}x(t)\delta(t-T_s n)\nonumber\\
+&=& \sum_{n=-\infty}^{\infty}x(T_s n)\delta(t-T_s n)\nonumber\\
+&=& \sum_{n=-\infty}^{\infty}x[n]\delta(t-T_s n).
+\end{IEEEeqnarray}
+Analysis shows that $x_d(t)$ does not contain more information than $x[n]$ does, except the sampling interval $T_{s}$. This means that $x[n]$ and $x_d(t)$ are sort of equivalent. In other words,
+\begin{equation}
+x_d(t) \Longleftrightarrow x[n] + T_s.
+\end{equation}
+If we know $x[n]$ and $T_s$, we can uniquely construct $x_d(t)$ by
+\begin{equation}
+x_d(t) = \sum_{n=-\infty}^{\infty}x[n]\delta(t-T_s n).\label{def:x_d}
+\end{equation}
+On the other hand, if we know $x_d(t)$, we can extract $x[n]$ from $x_d(t)$ by
+\begin{equation}
+x[n]=\int_{T_{s} n-\varepsilon}^{T_{s} n+\varepsilon}x_d(t)\dd t,
+\end{equation}
+where $\varepsilon$ is any real number that satisfies $0<\varepsilon<T_{s}$. 
+
+In this paper, $x_d(t)$ is termed as the continuous (time) form of $x[n]$, and $x[n]$ is termed as the discrete (time) form of $x_d(t)$.
+
+We can generalize the previous discussion to general functions. If a continuous-argument function $f(x)$ can be expressed in the following form
+\begin{equation}
+f(x) = \sum_{n=-\infty}^{\infty}f[n]\delta(x-n\Delta x),
+\end{equation}
+we say that $f(x)$, as a continuous-argument function, is discrete with a sampling interval of $\Delta x$. When $f(x)$ is discrete, it has a discrete form $f[n]$. Notice that the values of $f(x)$ might be continuous or discrete. In this paper, by continuous, we mean continuous with respect to arguments. Similarly, by discrete, we mean discrete with respect to arguments.
+
+\subsection{Interpolation}
+
+Can we obtain continuous-time signals from discrete-time signals? It turns out that we can and this process is called interpolation. Since we have a lot of ways to fill in the information between sampling points, we have a lot of interpolation methods. One method is the zero-order hold
+\begin{equation}
+x_0(t) = \sum_{n = -\infty}^{\infty} x[n] \Pi\left(\frac{t-T_s n}{T_s}-\frac{1}{2}\right),
+\end{equation}
+where $\Pi(t)$ is the unit rectangle function
+\begin{equation}
+	\Pi(t) = \left\{ \,
+		\begin{IEEEeqnarraybox}[][c]{l?s}
+			\IEEEstrut
+			1 & if $|t|<0.5$, \\
+			0.5 & if $|t|=0.5$, \\
+			0 & if $|t|>0.5$.
+			\IEEEstrut
+		\end{IEEEeqnarraybox}
+	\right.
+\end{equation}
+Another method is the sinc interpolation
+\begin{equation}
+x_s(t) = \sum_{n = -\infty}^{\infty} x[n] \sinc\left(\frac{t-T_s n}{T_s}\right),
+\end{equation}
+where
+\begin{equation}
+\sinc(t) = \frac{\sin(\pi t)}{\pi t}.
+\end{equation}
+
+We saw that we can interpolate a discrete-time signal using its discrete form $x[n]$ directly. It turns out that we can interpolate a discrete-time signal using its continuous form $x_d(t)$ more elegantly. In fact, we can obtain the sinc interpolation by convolving $x_d(t)$ and $\sinc{(\frac{t}{T_s})}$, as follow
+\begin{equation}
+x_s(t) = x_d(t)*\sinc\left(\frac{t}{T_{s}}\right).\label{eqn:x_d_to_x_s}
+\end{equation}
+The proof is as follows
+\begin{IEEEeqnarray}{rCl}
+&&x_d(t)*\sinc\left(\frac{t}{T_{s}}\right)\nonumber\\
+&=&\int_{-\infty}^{\infty}x_d(t')\sinc\left(\frac{t-t'}{T_{s}}\right)\dd t'\nonumber\\
+&=&\int_{-\infty}^{\infty}\sum_{m=-\infty}^{\infty}x[m]\delta(t'-T_{s} m)\sinc\left(\frac{t-t'}{T_{s}}\right)\dd t'\nonumber\\
+&=&\sum_{m=-\infty}^{\infty}x[m]\int_{-\infty}^{\infty}\delta(t'-T_{s} m)\sinc\left(\frac{t-t'}{T_{s}}\right)\dd t'\nonumber\\
+&=&\sum_{m=-\infty}^{\infty}x[m]\sinc\left(\frac{t-T_{s} m}{T_{s}}\right).
+\end{IEEEeqnarray}
+With this result, we can extract $x[n]$ from $x(t)$ by using the sinc interpolation as an intermediate step. Since $x[n] = x_s(T_{s} n)$, we can evaluate Eq. (\ref{eqn:x_d_to_x_s}) at $t = T_s n$
+\begin{equation}
+x[n]=x_d(t)*\sinc\left(\frac{t}{T_{s}}\right)\Big|_{t=T_{s} n}.\label{eqn:x_n_from_x_d_by_sinc}
+\end{equation}
+
+\section{CTFT}
+\label{sec:CTFT}
+
+\subsection{CTFT Definition and Conventions}
+
+In this paper, we select CTFT as a starting point to derive all other transforms. There are several conventions for CTFT in the literature. In Wolfram Mathematica, a generalized form for the CTFT of $x(t)$ is:
+\begin{equation}
+X_{a,b}(\xi)=\sqrt{\frac{|b|}{(2\pi)^{1-a}}}\int_{-\infty}^{\infty}x(t)e^{j b \xi t}\dd t,
+\end{equation}
+where $X_{a,b}(\xi)$ is the CTFT of $x(t)$, $\xi$ is the transformed independent variable, and $a$ and $b$ are convention parameters \cite{ref:wfft2016}. Common choices for $[a, b]$ are $[0,-2\pi]$, $[1,-1]$, and $[0, -1]$. When $b = -2\pi$, $\xi$ can be interpreted as the ordinary frequency $f$. When $b = -1$, $\xi$ can be interpreted as the angular frequency $\omega$. In this way, we have
+\begin{IEEEeqnarray}{rCl}
+X_{0,-2\pi}(f)&=&\int_{-\infty}^{\infty}x(t)e^{-j 2\pi ft}\dd t,\label{eqn:ordinary_freq_convention}\\
+X_{1,-1}(\omega)&=&\int_{-\infty}^{\infty}x(t)e^{-j \omega t}\dd t,\label{eqn:angular_freq_convention}\\
+X_{0,-1}(\omega)&=&\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}x(t)e^{-j \omega t}\dd t.\label{eqn:angular_unitary_freq_convention}
+\end{IEEEeqnarray}
+Eq. (\ref{eqn:ordinary_freq_convention}) is the ordinary frequency convention, Eq. (\ref{eqn:angular_freq_convention}) is the non-unitary angular frequency convention, and Eq. (\ref{eqn:angular_unitary_freq_convention}) is the unitary angular frequency convention. The ordinary frequency and the angular frequency are related by $\omega = 2\pi f$. We have
+\begin{IEEEeqnarray}{rCl}
+X_{0,-2\pi}(f)&=&X_{1,-1}(2 \pi f),\\
+X_{1,-1}(\omega)&=&X_{0,-2\pi}(\frac{\omega}{2\pi}).
+\end{IEEEeqnarray}
+
+
+What if there is no explicit designation for $a$ and $b$? In digital signal processing, we have the following expression
+\begin{IEEEeqnarray}{rCl}
+X(j\omega)&=&\int_{-\infty}^{\infty}x(t)e^{-j \omega t}\dd t.
+\end{IEEEeqnarray}
+where $j$ is the imaginary unit. $X(j\omega)$ should not be interpreted as a function of $j\omega$, but as a function of $\omega$. There are situations where $X(j\omega)$ is an explicit expression of $\omega$, but not an explicit expression of $j\omega$. It is not hard to infer that
+\begin{IEEEeqnarray}{rCl}
+X(j 2 \pi f)&=&\int_{-\infty}^{\infty}x(t)e^{-j 2 \pi f t}\dd t.
+\end{IEEEeqnarray}
+In this paper, we use the ordinary frequency convention so often that we make a special assumption. If there is no designation for $a$ and $b$, and there is no imaginary unit before the independent variable, we assume that we use the ordinary frequency convention. In this way, we have
+\begin{IEEEeqnarray}{rCl}
+X(f)&=&\int_{-\infty}^{\infty}x(t)e^{-j 2\pi ft}\dd t.
+\end{IEEEeqnarray}
+
+There is a hat notation for Fourier transforms, as follows
+\begin{IEEEeqnarray}{rCl}
+\hat{x}(f)&=&\int_{-\infty}^{\infty}x(t)e^{-j 2\pi f t}\dd t.
+\end{IEEEeqnarray}
+In this paper, we stick to the capital letter notation.
+
+\subsection{Inverse CTFT}
+
+We have the familiar inverse Fourier transform as follow
+\begin{equation}
+x(t)=\frac{1}{2\pi}\int_{-\infty}^{\infty}X_{1,-1}(\omega)e^{j \omega t}\dd \omega.
+\end{equation}
+To obtain the inverse Fourier transform for other conventions, we can use the following relationship
+\begin{equation}
+X_{1,-1}(\omega)=\sqrt{\frac{(2\pi)^{1-a}}{|b|}}X_{a,b}\left(-\frac{\omega}{b}\right).
+\end{equation}
+Hence, we have
+\begin{IEEEeqnarray}{rCl}
+x(t)&=&\frac{1}{2\pi}\int_{-\infty}^{\infty}X_{1,-1}(\omega)e^{j \omega t}\dd \omega\nonumber\\
+&=&\frac{1}{2\pi}\int_{-\infty}^{\infty}\sqrt{\frac{(2\pi)^{1-a}}{|b|}}X_{a,b}\left(-\frac{\omega}{b}\right)e^{j \omega t}\dd \omega\nonumber\\
+&=&\sqrt{(2\pi)^{-1-a}|b|}\int_{-\infty}^{\infty}X_{a,b}(\omega')e^{-j b\omega' t}\dd \omega'.
+\end{IEEEeqnarray}
+According to this expression, we have
+\begin{IEEEeqnarray}{rCl}
+x(t)&=&\int_{-\infty}^{\infty}X(f)e^{j 2\pi ft}\dd f,\\
+x(t)&=&\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}X_{0,-1}(\omega)e^{j \omega t}\dd \omega.
+\end{IEEEeqnarray}
+We see that for $[a, b]=[0,-2\pi]$ or $[0,-1]$, the coefficient in front of the integral sign for the inverse transform is the same as the one for the transform. The two conventions are said to be unitary conventions.
+
+\subsection{Examples}
+Let us denote
+\begin{equation}
+\mathscr{F}[x(t)]=X(f).
+\end{equation}
+We can easily verify the following equations
+\begin{IEEEeqnarray}{rCl}
+\mathscr{F}[\Pi(t)]&=&\sinc(f),\label{eqn:ft_Pi}\\
+\mathscr{F}[\delta(t)]&=&1.\label{eqn:ft_delta}
+\end{IEEEeqnarray}
+
+
+When $X(f)$ is an even function, we can prove that
+\begin{equation}
+\mathscr{F}[X(t)]=x(f).
+\end{equation}
+Hence, we have
+\begin{IEEEeqnarray}{rCl}
+\mathscr{F}[\sinc(t)]&=&\Pi(f),\label{eqn:ft_sinc}\\
+\mathscr{F}[1]&=&\delta(f).\label{eqn:ft_1}
+\end{IEEEeqnarray}
+
+We can verify the following equation
+\begin{equation}
+\mathscr{F}[\mathrm{III}(t)]=\mathrm{III}(f),\label{eqn:ctft_delta_comb}
+\end{equation}
+by using the Poisson summation formula \cite{ref:benedetto1997} 
+\begin{equation}
+\sum_{n=-\infty}^{\infty}e^{-j 2\pi f n} = \sum_{n=-\infty}^{\infty}e^{j 2\pi f n}=\sum_{k=-\infty}^{\infty}\delta(f-k).\label{eqn:Poisson_summation_formula}
+\end{equation}
+
+
+
+\section{DTFT}
+\label{sec:DTFT}
+
+\subsection{DTFT Definition}
+
+For a discrete-time signal $x[n], n \in \mathbb{Z}$, its Discrete Time Fourier Transform (DTFT) is defined as
+\begin{equation}
+X(e^{j 2\pi\hat{f}}) = \sum_{n=-\infty}^{\infty}x[n]e^{-j 2\pi \hat{f} n},\label{def:DTFT}
+\end{equation}
+and the inverse DTFT is defined as
+\begin{equation}
+x[n] = \int_{0}^{1}X(e^{j 2\pi\hat{f}})e^{j 2\pi \hat{f} n}\dd \hat{f},\label{def:inverse_DTFT}
+\end{equation}
+$\hat{f}$ is called the digital ordinary frequency. The independent variable of $X(e^{j 2\pi\hat{f}})$ is $\hat{f}$, not $e^{j 2\pi\hat{f}}$. $X(e^{j 2\pi\hat{f}})$ is a periodic function with a period of $1$.
+
+Eqns. (\ref{def:DTFT}) and (\ref{def:inverse_DTFT}) are definitions of DTFT and inverse DTFT for the ordinary frequency convention ($[a,b]=[0,-2\pi]$). For the non-unitary angular frequency convention ($[a,b]=[1,-1]$), we have \cite{ref:romberg2016_1}
+\begin{equation}
+X(e^{j \hat{\omega}}) = \sum_{n=-\infty}^{\infty}x[n]e^{-j\hat{\omega} n},
+\end{equation}
+\begin{equation}
+x[n] = \frac{1}{2\pi} \int_{0}^{2\pi}X(e^{j\hat{\omega}})e^{j\hat{\omega} n}\dd \hat{\omega}.
+\end{equation}
+$\hat{\omega}$ is called the digital angular frequency. The independent variable of $X(e^{j \hat{\omega}})$ is $\hat{\omega}$, instead of $e^{j \hat{\omega}}$. $X(e^{j \hat{\omega}})$ is a periodic function with a period of $2\pi$.
+
+Although the non-unitary angular frequency convention is widely used in the digital signal processing community, we mainly use the ordinary frequency convention in this paper.
+
+In the following sections, we try to derive DTFT from CTFT, and inverse DTFT from inverse CTFT, so that we can better understand the essence of DTFT.
+
+\subsection{Deriving DTFT from CTFT}
+\label{sec:DTFT_from_CTFT}
+
+The discrete-time signal $x[n], n \in \mathbb{Z}$ is not a continuous-time function. CTFT only applies to continuous-time functions. Let us consider the continuous form of $x[n]$, namely
+\begin{equation}
+x_d(t)=\sum_{n=-\infty}^{\infty}x[n]\delta(t-T_{s} n),
+\end{equation}
+where $T_{s}$ is the sampling interval. If we take the CTFT of $x_d(t)$, we obtain
+\begin{IEEEeqnarray}{rCl}
+X_d(f)&=&\int_{-\infty}^{\infty}x_d(t)e^{-j 2 \pi f t}\dd t\nonumber\\
+&=&\int_{-\infty}^{\infty}\sum_{n=-\infty}^{\infty}x[n]\delta(t-T_{s} n)e^{-j 2 \pi f t}\dd t\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}x[n]\int_{-\infty}^{\infty}\delta(t-T_{s} n)e^{-j 2 \pi f t}\dd t\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}x[n]e^{-j 2 \pi f T_{s} n}\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}x[n]e^{-j 2 \pi (f / f_{s}) n}\nonumber\\
+&=&X(e^{j 2 \pi \hat{f}}).
+\end{IEEEeqnarray}
+where $\hat{f}=f/f_s$ and $f_s = 1/T_s$. $\hat{f}$ can be interpreted as a normalized ordinary frequency with respect to the sampling frequency $f_s$. Since $X(e^{j 2 \pi \hat{f}})$ is a periodic function with a period of $1$, $X_d(f)$ is a periodic function with a period of $f_s$.
+
+Since $X_d(f)$ is a periodic function, it contains all information within a period. In other words, it tells you all the frequency information of $x_d(t)$ (or $x[n]$) within a period. For this reason, the period of $X_d(f)$ with respect to $f$ is also called the frequency coverage (or range) of $X_d(f)$. The frequency coverage of $X_d(f)$ can be denoted by $F$. The frequency coverage is equal to $f_s$.
+
+
+We see that the DTFT of $x[n]$ can be obtained by taking the CTFT of its continuous form $x_d(t)$ and replacing $f/f_s$ by $\hat{f}$. If $f_{s} = 1$ or $T_{s} = 1$, $\hat{f}=f$, and the DTFT of $x[n]$ is equal to the CTFT of $x_d(t)$.
+
+\subsection{Deriving Inverse DTFT from Inverse CTFT}
+
+How do we obtain $x[n]$ when we have $X(e^{j 2 \pi \hat{f}})$? Since the CTFT of $x_d(t)$ is $X(e^{j 2 \pi f / f_s})$, we can take the inverse CTFT of $X(e^{j 2 \pi f/f_s})$ to obtain $x_d(t)$. We can then extract $x[n]$ from $x_d(t)$ by using the sinc interpolation as an intermediate step. According to Eq. (\ref{eqn:x_d_to_x_s}), we have
+\begin{equation}
+x_s(t) = x_d(t)*\sinc\left(\frac{t}{T_{s}}\right).
+\end{equation}
+According to the multiplication theorem of CTFT, we can take the CTFT of $x_s(t)$ and obtain
+\begin{equation}
+X_s(f) = X_d(f)T_{s}\Pi(T_{s}f).
+\end{equation}
+Let us now take the inverse CTFT of $X_s(f)$ and evaluate the result at $t = T_s n$. We have
+\begin{IEEEeqnarray}{rCl}
+x_s(T_{s} n)&=&\int_{-\infty}^{\infty}X_s(f)e^{j 2 \pi f T_{s}n}\dd f\nonumber\\
+&=&\int_{-\infty}^{\infty}X_d(f)T_{s}\Pi(T_s f)e^{j 2 \pi f T_{s} n}\dd f\nonumber\\
+&=&\int_{-\infty}^{\infty}X(e^{j 2 \pi f / f_s})T_{s}\Pi(T_s f)e^{j 2 \pi f T_{s} n}\dd f\nonumber\\
+&=&\int_{-\infty}^{\infty}X(e^{j 2 \pi \hat{f}})\Pi(\hat{f})e^{j 2 \pi \hat{f} n}\dd \hat{f}\nonumber\\
+&=&\int_{-\frac{1}{2}}^{\frac{1}{2}}X(e^{j 2 \pi \hat{f}})e^{j 2 \pi \hat{f} n}\dd \hat{f}\nonumber\\
+&=&\int_{0}^{1}X(e^{j 2 \pi \hat{f}})e^{j 2 \pi \hat{f} n}\dd \hat{f}.
+\end{IEEEeqnarray}
+Since $x_s(T_s n) = x[n]$, we have
+\begin{IEEEeqnarray}{rCl}
+x[n]&=&\int_{0}^{1}X(e^{j 2 \pi \hat{f}})e^{j 2 \pi \hat{f} n}\dd \hat{f}.\label{def:inverse_DTFT_2}
+\end{IEEEeqnarray}
+
+It should be noted that Eq. (\ref{def:inverse_DTFT_2}) is one way to recover $x[n]$, and it is not the unique way. This recovering method is actually based on the sinc interpolation of $x[n]$. There are other interpolation methods to recover $x[n]$, and they have different expressions than Eq. (\ref{def:inverse_DTFT_2}). 
+
+\section{FS}
+\label{sec:FS}
+
+\subsection{FS Definition}
+
+If DTFT is CTFT adapted for discrete-time signals, then Fourier Series (FS) is CTFT adapted for continuous-time and periodic signals. Suppose $x(t)$ is a continuous-time and periodic signal with a period of $T$. We have
+\begin{equation}
+c[k]=\frac{1}{T}\int_{0}^{T}x(t)e^{-j2\pi\frac{k}{T}t}\dd t,\label{def:FS}
+\end{equation}
+and
+\begin{equation}
+x(t)=\sum_{k=-\infty}^{\infty}c[k]e^{j2\pi\frac{k}{T}t}.\label{def:inverse_FS}
+\end{equation}
+Eq. (\ref{def:FS}) is the Fourier series transform, and Eq. (\ref{def:inverse_FS}) is the inverse Fourier series transform.
+
+For a periodic signal $x(t)$ with a period of $T$, it contains all useful information in a period. For this reason, $T$ is also called the time coverage (or range) of $x(t)$. 
+
+In the following sections, we try to derive FS from CTFT, and inverse FS from inverse CTFT, so that we can better understand the essence of FS.
+
+\subsection{Deriving FS from CTFT}
+
+Let us take the CTFT of $x(t)$.
+\begin{IEEEeqnarray}{rCl}
+X(f)&=&\int_{-\infty}^{\infty}x(t)e^{-j 2\pi f t}\dd t\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\int_{nT}^{T+nT}x(t)e^{-j 2\pi f t}\dd t\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\int_{0}^{T}x(t'+nT)e^{-j 2\pi f (t'+nT)}\dd t'\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\int_{0}^{T}x(t')e^{-j 2\pi f t'}e^{-j 2\pi fnT}\dd t'\nonumber\\
+&=&\int_{0}^{T}x(t')e^{-j 2\pi f t'}\dd t'\sum_{n=-\infty}^{\infty}e^{-j 2\pi f n T}\nonumber\\
+&=&\int_{0}^{T}x(t')e^{-j 2\pi f t'}\dd t'\sum_{k=-\infty}^{\infty}\delta(T f-k)\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}\left(\frac{1}{T}\int_{0}^{T}x(t')e^{-j 2\pi f t'}\dd t'\right)\delta\left(f-\frac{k}{T}\right)\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}\left(\frac{1}{T}\int_{0}^{T}x(t')e^{-j 2\pi \frac{k}{T} t'}\dd t'\right)\delta\left(f-\frac{k}{T}\right)\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}c[k]\delta\left(f-\frac{k}{T}\right),\label{eqn:FS_from_CTFT}
+\end{IEEEeqnarray}
+where we applied the Poisson summation formula in Eq. (\ref{eqn:Poisson_summation_formula}). We see that $X(f)$ is discrete with a sampling interval of $1/T$. The discrete form of $X(f)$ is $c[k]$.
+
+\subsection{Deriving Inverse FS from Inverse CTFT}
+
+The inverse FS can be obtained by applying inverse CTFT to $X(f)$. We have
+\begin{IEEEeqnarray}{rCl}
+x(t)&=&\int_{-\infty}^{\infty}X(f)e^{j 2\pi ft}\dd f\nonumber\\
+&=&\int_{-\infty}^{\infty}\sum_{k=-\infty}^{\infty}c[k]\delta\left(f-\frac{k}{T}\right)e^{j 2\pi ft}\dd f\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}c[k]\int_{-\infty}^{\infty}\delta\left(f-\frac{k}{T}\right)e^{j 2\pi ft}\dd f\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}c[k]e^{j 2\pi \frac{k}{T} t}.
+\end{IEEEeqnarray}
+
+\subsection{Frequency Interval}
+
+In the discussion above, we see that $\frac{1}{T}$ can be interpreted as a sampling interval. The FS of $x(t)$, namely $X(f)$, is discrete and non-zero at $f = \frac{k}{T}$. We can define
+\begin{equation}
+\Delta f = \frac{1}{T}.
+\end{equation}
+$\Delta f$ is the sampling interval between two non-zero points in $X(f)$. $\Delta f$ is also called the frequency interval.
+
+If $T$ is the least positive period (or the fundamental period) of $x(t)$, then $\Delta f$ is equal to the fundamental frequency of $x(t)$, denoted by $f_1$. All non-zero frequencies can be expressed by
+\begin{equation}
+f_{k} = k f_1 = k \Delta f.
+\end{equation}
+
+\section{DFT}
+\label{sec:DFT}
+
+Discrete Fourier Transform (DFT) is CTFT adapted for periodic discrete-time signals. Suppose $x[n], n \in \mathbb{Z}$ is a periodic discrete-time signal with a period of $N$. In other words, we have
+\begin{equation}
+x[n+N]=x[n],
+\end{equation}
+for all $n \in \mathbb{Z}$. We can specify $x[n]$ by
+\begin{equation}
+x[n], n \in {0, 1, 2, ..., N-1}.
+\end{equation}
+
+The Discrete Fourier Transform (DFT) of $x[n]$ is defined by \cite{ref:Bracewell}
+\begin{equation}
+X[k] = \frac{1}{N}\sum_{n=0}^{N-1}x[n]e^{-j 2\pi \frac{k}{N} n},\label{def:DFT}
+\end{equation}
+and the inverse DFT is defined by
+\begin{equation}
+x[n] = \sum_{n=0}^{N-1}X[k]e^{j 2\pi \frac{k}{N} n}.\label{def:inverse_DFT}
+\end{equation}
+$X[k]$ is a periodic discrete-argument sequence with a period of $N$. We can specify $X[k]$ by its consecutive $N$ terms.
+
+It should be noted that there are other conventions to define DFT. One is to move $\frac{1}{N}$ in Eq. (\ref{def:DFT}) to Eq. (\ref{def:inverse_DFT}), as follows
+\begin{equation}
+X[k] = \sum_{n=0}^{N-1}x[n]e^{-j 2\pi \frac{k}{N} n},\label{def:DFT_conv2}
+\end{equation}
+\begin{equation}
+x[n] = \frac{1}{N}\sum_{n=0}^{N-1}X[k]e^{j 2\pi \frac{k}{N} n}.\label{def:inverse_DFT_conv2}
+\end{equation}
+This convention is used in MATLAB. However, in this paper, unless otherwise specified, we use Eqs. (\ref{def:DFT}) and (\ref{def:inverse_DFT}) for DFT and inverse DFT.
+
+Whereas there is a choice between ordinary and angular frequency conventions for CTFT and DTFT, FS and DFT only have the ordinary frequency convention.  Choosing the ordinary frequency convention for CTFT and DTFT makes it easy to relate CTFT and DTFT to FS and DFT.
+
+\subsection{Deriving DFT from CTFT via DTFT}
+CTFT only applies to continuous-time signals. To apply CTFT, let us consider the continuous form of $x[n]$
+\begin{equation}
+x_d(t)=\sum_{n=-\infty}^{\infty}x[n]\delta(t-T_{s} n).
+\end{equation}
+The CTFT of $x_d(t)$ should be equal to the DTFT of $x[n]$ with $\hat{f}$ replaced by $f/f_s$. Taking the DTFT of $x[n], n \in \mathbb{Z}$, we have
+\begin{IEEEeqnarray}{rCl}
+&&X(e^{j 2\pi\hat{f}})\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}x[n]e^{-j 2\pi \hat{f} n}\nonumber\\
+&=&\sum_{m=-\infty}^{\infty}\sum_{n=mN}^{mN+N-1}x[n]e^{-j 2\pi \hat{f} n}\nonumber\\
+&=&\sum_{m=-\infty}^{\infty}\sum_{n'=0}^{N-1}x[n'+mN]e^{-j 2\pi \hat{f} (n'+mN)}\nonumber\\
+&=&\sum_{n'=0}^{N-1}x[n']e^{-j 2\pi \hat{f} n'}\sum_{m=-\infty}^{\infty}e^{-j 2\pi \hat{f} mN}\nonumber\\
+&=&\sum_{n'=0}^{N-1}x[n']e^{-j 2\pi \hat{f} n'}\sum_{k=-\infty}^{\infty}\delta(N \hat{f}-k)\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}\left(\frac{1}{N}\sum_{n'=0}^{N-1}x[n']e^{-j 2\pi \hat{f} n'}\right)\delta\left(\hat{f}-\frac{k}{N}\right)\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}\left(\frac{1}{N}\sum_{n'=0}^{N-1}x[n']e^{-j 2\pi \frac{k}{N} n'}\right)\delta\left(\hat{f}-\frac{k}{N}\right)\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}X[k]\delta\left(\hat{f}-\frac{k}{N}\right),\label{eqn:dft_from_dtft}
+\end{IEEEeqnarray}
+where we applied the Poisson summation formula in Eq. (\ref{eqn:Poisson_summation_formula}). We see that $X(e^{j 2\pi\hat{f}})$ is discrete with a sampling interval of ${1}/{N}$. The discrete form of $X(e^{j 2\pi\hat{f}})$ is $X[k]$. We also see that ${k}/{N}$ can be interpreted as a normalized ordinary frequency.
+
+Let us relate $X(e^{j 2 \pi \hat{f}})$ to $X_d(f)$. We have
+\begin{IEEEeqnarray}{rCl}
+X_d(f) &=& X(e^{j 2 \pi f / f_s})\nonumber\\
+&=& \sum_{k=-\infty}^{\infty}X[k]\delta\left(\frac{f}{f_s}-\frac{k}{N}\right)\nonumber\\
+&=& \sum_{k=-\infty}^{\infty}\frac{X[k]}{T_s}\delta\left(f-\frac{k}{N T_s}\right)\nonumber\\
+&=& \sum_{k=-\infty}^{\infty}\frac{X[k]}{T_s}\delta\left(f-\frac{k}{T}\right),\label{eqn:CTFT_by_DFT}
+\end{IEEEeqnarray}
+where $T$ is the period of $x_d(t)$ and $T = N T_s$. This equation means that the CTFT of the continuous form of $x[n]$, namely $X_d(f)$, is discrete with a sampling interval of $1/T$, and the discrete form of $X_d(f)$ is $X[k]/T_s$. 
+
+\subsection{Deriving DFT from CTFT via FS}
+
+Since $x[n]$ is a periodic signal, the continuous form of $x[n]$, namely $x_d(t)$, is also periodic. The period of $x_d(t)$ is $T = N T_{s}$. Let us take the FS of $x_{d}(t)$, and we have
+\begin{IEEEeqnarray}{rCl}
+c[k]&=&\frac{1}{T}\int_{0}^{T}x_{d}(t)e^{-j2\pi\frac{k}{T}t}\dd t\nonumber\\
+&=&\frac{1}{T}\int_{-\frac{T_{s}}{2}}^{T_{s} N-\frac{T_{s}}{2}}\sum_{n=-\infty}^{\infty}x[n]\delta(t-T_{s} n)e^{-j2\pi\frac{k}{T}t}\dd t\nonumber\\
+&=&\frac{1}{T}\sum_{n=-\infty}^{\infty}x[n]\int_{-\frac{T_{s}}{2}}^{T_{s} N-\frac{T_{s}}{2}}\delta(t-T_{s} n)e^{-j2\pi\frac{k}{T}t}\dd t\nonumber\\
+&=&\frac{1}{T}\sum_{n=0}^{N-1}x[n]e^{-j2\pi\frac{k}{T}T_{s} n}\dd t\nonumber\\
+&=&\frac{1}{T_{s} N}\sum_{n=0}^{N-1}x[n]e^{-j2\pi\frac{k}{N}n}\dd t\nonumber\\
+&=&{X[k]}/{T_{s}}.
+\end{IEEEeqnarray}
+We see that we can obtain the DFT of $x[n]$ by scaling the FS of $x_d(t)$, as follow
+\begin{equation}
+X[k]=T_{s}c[k].
+\end{equation}
+
+We can relate $c[k]$ to $X_d(f)$ by Eq. (\ref{eqn:FS_from_CTFT}), as follow
+\begin{IEEEeqnarray}{rCl}
+X_d(f) &=& \sum_{k=-\infty}^{\infty}c[k]\delta\left(f-\frac{k}{T}\right)\nonumber\\
+&=& \sum_{k=-\infty}^{\infty}\frac{X[k]}{T_{s}}\delta\left(f-\frac{k}{T}\right).\label{eqn:ck_to_Xdf}
+\end{IEEEeqnarray}
+The result is the same as Eq. (\ref{eqn:CTFT_by_DFT}).
+
+\subsection{Deriving Inverse DFT from Inverse CTFT}
+
+When we have $X[k], k = 0,1,...,N-1$, and we know the sampling interval $T_s$, we have the CTFT of $X_d(f)$, as shown in Eq. (\ref{eqn:CTFT_by_DFT}). To obtain $x_d(t)$, we can simply take the inverse CTFT of $X(f)$, as follow
+\begin{IEEEeqnarray}{rCl}
+x_{d}(t)&=&\int_{-\infty}^{\infty}X_d(f)e^{j 2\pi ft}\dd f\nonumber\\
+&=&\int_{-\infty}^{\infty}\sum_{k=-\infty}^{\infty}\frac{X[k]}{T_{s}}\delta\left(f-\frac{k}{T}\right)e^{j 2\pi ft}\dd f\nonumber\\
+&=&\sum_{k=-\infty}^{\infty}\frac{X[k]}{T_{s}}e^{j 2\pi\frac{k}{T}t}\nonumber\\
+&=&\sum_{m=-\infty}^{\infty}\sum_{k=m N}^{m N + N - 1}\frac{X[k]}{T_{s}}e^{j 2\pi\frac{k}{T}t}\nonumber\\
+&=&\sum_{m=-\infty}^{\infty}\sum_{k'=0}^{N - 1}\frac{X[k'+m N]}{T_{s}}e^{j 2\pi\frac{k'+m N}{T}t}\nonumber\\
+&=&\sum_{k'=0}^{N - 1}\frac{X[k']}{T_{s}}e^{j 2\pi\frac{k'}{T}t}\sum_{m=-\infty}^{\infty}e^{j 2\pi\frac{m N}{T}t}\nonumber\\
+&=&\sum_{k'=0}^{N - 1}\frac{X[k']}{T_{s}}e^{j 2\pi\frac{k'}{T}t}\sum_{n=-\infty}^{\infty}\delta\left(\frac{N}{T}t-n\right)\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\left(\sum_{k'=0}^{N - 1}\frac{X[k']}{T_{s}}e^{j 2\pi\frac{k'}{T}t}\right)\frac{T}{N}\delta\left(t-\frac{T}{N}n\right)\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\left(\sum_{k'=0}^{N - 1}X[k']e^{j 2\pi\frac{k'}{N} n}\right)\delta(t-T_{s} n),
+\end{IEEEeqnarray}
+where we applied the Poisson summation formula in Eq. (\ref{eqn:Poisson_summation_formula}).
+We see that $x_d(t)$ is a discrete continuous-time function with a sampling interval of $T_s$. The discrete form of $x_d(t)$ is
+\begin{equation}
+x[n] = \sum_{k=0}^{N - 1}X[k]e^{j2\pi\frac{k}{T}t}.
+\end{equation}
+This is the expression for inverse DFT.
+
+\section{Expressions}
+\label{sec:expressions}
+
+Table \ref{table:1} summarizes the expressions for CTFT, DTFT, FS, and DFT. DTFT is applicable to discrete-time signals, FS is applicable to periodic continuous-time signals, and DFT is applicable to periodic discrete-time signals. CTFT is applicable to all signals, provided that discrete-time signals are converted to their continuous forms.
+
+\begin{table*}[htb!]
+\caption{Summary of CTFT, DTFT, FS, and DFT}
+\centering
+{\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{l|l|l|l|l}
+\hline
+Transform & Signal Properties & Expression & Inverse Expression & CTFT Expression \\
+\hline
+& & & & \\[-2.9ex] % Extra Space
+CTFT & & $\displaystyle  X(f)=\int_{-\infty}^{\infty}x(t)e^{-j 2\pi ft}\dd t $ & $\displaystyle x(t)=\int_{-\infty}^{\infty}X(f)e^{j 2\pi ft}\dd f$ & \\
+DTFT & Discrete & $\displaystyle X(e^{j 2\pi\hat{f}}) = \sum_{n=-\infty}^{\infty}x[n]e^{-j 2\pi \hat{f} n}$ & $\displaystyle x[n] = \int_{0}^{1}X(e^{j 2\pi\hat{f}})e^{j 2\pi \hat{f} n}\dd \hat{f}$ & $\displaystyle X_d(f) = X(e^{j 2 \pi f/f_s})$ \\
+FS & Periodic & $\displaystyle c[k] = \frac{1}{T}\int_{0}^{T}x(t)e^{-j2\pi\frac{k}{T}t}\dd t$ & $\displaystyle x(t) = \sum_{k=-\infty}^{\infty}c[k]e^{j2\pi\frac{k}{T}t}$ & $\displaystyle X(f) = \sum_{k=-\infty}^{\infty}c[k]\delta\left(f-\frac{k}{T}\right)$ \\
+DFT & Discrete \& Periodic & $\displaystyle X[k] = \frac{1}{N}\sum_{n=0}^{N-1}x[n]e^{-j 2\pi \frac{k}{N} n}$ & $\displaystyle x[n] = \sum_{n=0}^{N-1}X[k]e^{j 2\pi \frac{k}{N} n}$ & $\displaystyle X_d(f) = \sum_{k=-\infty}^{\infty}\frac{X[k]}{T_s}\delta\left(f-\frac{k}{T}\right)$ \\
+\hline
+\end{tabular}}
+\label{table:1}
+\end{table*}
+
+It is hard to remember all the expressions. As a result, it is important to explore the relationship between the expressions.
+
+When switching from a continuous-time signal to a discrete-time signal, such as from CTFT to DTFT and from FS to DFT, we replace $x(t)$ by $x[n]$, replace $t$ by $T_s n$, and replace integration by summation. $T_s$ is then absorbed by $f$ (or $k/T$) to form $\hat{f}$ (or $k/N$).
+
+When switching to a periodic signal, such as from CTFT to FS and from DTFT to DFT, we restrict the integration or summation to a period, divide the expression by a period, and discretize the ordinary frequency (or the normalized ordinary frequency) with a sampling interval equal to the inverse of a period. For example, $f$ is discretized to be $k/T, k\in\mathbb{Z}$, whereas $\hat{f}$ is discretized to be $k/N, k = 0,1,...,N-1$.
+
+
+\section{Discreteness and Periodicity}
+\label{sec:Discreteness_and_Periodicity}
+
+In Table \ref{table:1}, we see that $X_d(f)$ in the row of DTFT is periodic with a period of $F = f_s = 1/T_s$, and $X_d(f)$ in the row of DFT is periodic with a period of $F = N/T = 1/T_s$ as well. This means that a sampling interval of $\Delta t = T_{s}$ in the time domain translates to a period of $\frac{1}{\Delta t}$ (or $\frac{1}{T_{s}}$) in the frequency domain. In other words, we have
+\begin{equation}
+F = \frac{1}{\Delta t}.
+\end{equation}
+$X(f)$ in the row of FS is discrete with a sampling interval of $\Delta f = 1/T$, and $X_d(f)$ in the row of DFT is also discrete with a sampling interval of $\Delta f = 1/T$. This means that a period of $T$ in the time domain translates to a sampling interval of $\frac{1}{T}$ in the frequency domain. In other words, we have
+\begin{equation}
+T = \frac{1}{\Delta f}.
+\end{equation}
+For DFT, since the signal is both discrete and periodic, we have $T\Delta f = F\Delta t = 1$. As a result, we have
+\begin{equation}
+\frac{F}{\Delta f} = \frac{T}{\Delta t}.
+\end{equation}
+This can be verified by $F/\Delta f = N$ and $T/\Delta t = N$.
+
+In a word, discreteness in the time domain translates to periodicity in the frequency domain, and periodicity in the time domain translates to discreteness in the frequency domain. We can explain the relationship between discreteness and periodicity in the following sections.
+
+\subsection{Discreteness to Periodicity}
+
+Suppose $x_d(t)$ is the continuous form of a discrete-time signal $x[n]$ with a sampling interval of $\Delta t$. $x_d(t)$ can always be expressed by
+\begin{equation}
+x_d(t)=x_i(t)\frac{1}{\Delta t}\mathrm{III}\left(\frac{t}{\Delta t}\right),\label{eqn:decomp_x_t_discrete}
+\end{equation}
+where $x_i(t)$ is any interpolation of $x[n]$. According to Eq. (\ref{eqn:ctft_delta_comb}) and the similarity theorem of CTFT, we have
+\begin{equation}
+\mathscr{F}[\frac{1}{\Delta t}\mathrm{III}(\frac{t}{\Delta t})]=\mathrm{III}(f \Delta t).
+\end{equation}
+According to the multiplication theorem of CTFT, we have
+\begin{IEEEeqnarray}{rCl}
+X_d(f)&=&\mathscr{F}[x_i(t)\frac{1}{\Delta t}\mathrm{III}(\frac{t}{\Delta t})]\nonumber\\
+&=&X_{i}(f)*\mathrm{III}(f \Delta t)\nonumber\\
+&=&X_{i}(f)*\sum_{n=-\infty}^{\infty}\delta(f\Delta t-n)\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\frac{1}{\Delta t}X_{i}(f)*\delta(f-\frac{n}{\Delta t})\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\frac{1}{\Delta t}X_{i}(f-\frac{n}{\Delta t}),
+\end{IEEEeqnarray}
+where $X_{i}(f)$ is the CTFT of $x_i(t)$. We see that $X(f)$ is a periodic extension of $X_{i}(f)$, and the period is $\frac{1}{\Delta t}$.
+
+\subsection{Periodicity to Discreteness}
+
+Suppose $x(t)$ is periodic with a period of $T$. Then $x(t)$ can always be expressed by
+\begin{equation}
+x(t)=x_{T}(t)*\frac{1}{T}\mathrm{III}(\frac{t}{T}),\label{eqn:decomp_x_t_period}
+\end{equation}
+where $x_{T}(t)$
+\begin{equation}
+x_{T}(t)=x(t)\Pi(\frac{t}{T}-\frac{1}{2}).
+\end{equation}
+According to the convolution theorem of CTFT, we have
+\begin{IEEEeqnarray}{rCl}
+X(f)&=&\mathscr{F}[x_{T}(t)*\frac{1}{T}\mathrm{III}(\frac{t}{T})]\nonumber\\
+&=&X_{T}(f)\mathrm{III}(T f)\nonumber\\
+&=&X_{T}(f)\sum_{n=-\infty}^{\infty}\delta(T f-n)\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\frac{1}{T}X_{T}(f)\delta(f-\frac{n}{T})\nonumber\\
+&=&\sum_{n=-\infty}^{\infty}\frac{1}{T}X_{T}(\frac{n}{T})\delta(f-\frac{n}{T}),
+\end{IEEEeqnarray}
+where $X_{T}(f)$ is the CTFT of $x_{T}(t)$. We see that $X(f)$ is discrete with a sampling interval of $\frac{1}{T}$.
+
+
+\section{DFT in Signal Processing}
+\label{sec:DFT_in_Signal_Processing}
+
+In the digital world, we often sample a continuous-time signal for a limited time. We can then apply the Fast Fourier Transform (FFT) on the sampled signal. FFT is essentially DFT. What does the DFT of the sampled discrete-time signal with a finite length tell us about the continuous-time signal?
+
+Let us assume that we sampled a continuous-time signal $x(t)$ from $t = 0 $ to $t = T$ with a sampling interval of $\Delta t = T_s$. $[0, T)$ is called the sampling window and $T$ is called the sampling duration. The resulting discrete-time signal is $x[n]=x(T_s n), n = 0, 1, ..., N-1$, where $N = T/ T_s$ is the number of samples. Notice that the last point $x[N-1]$ is located at $t = T - T_s$ instead of $t = T$. This is because each sampling point is effective for a duration of $T_s$. We can think that $x[0]$ is effective for $[0, T)$ and $x[N-1]$ is effective for $[T-T_s, T)$.
+
+Suppose the DFT of $x[n], n = 0, 1, ..., N-1$ is $X[k], k = 0, 1, ..., N-1$. What does $X[k]$ tell us about $x(t)$?
+
+It should be emphasized that when we take the DFT of $x[n]$, we are assuming that $x[n]$ is periodic with a period of $N$. Similarly, when we take the DFT of $x[n]$, we are assuming that $x(t)$ is periodic with a period of $T = T_s N$. We are effectively taking a periodic extension of $x(t), t \in [0, T)$ over the entire time axis to make up values of $x(t)$ for $t$ outside $[0, T)$. With this assumption, the DFT of $x[n]$ tells us some information about the FS of $x(t)$. In fact, the FS of $x(t)$ can be approximated in the following way
+\begin{IEEEeqnarray}{rCl}
+c[k]&=&\frac{1}{T}\int_{0}^{T}x(t)e^{-j 2\pi \frac{k}{T} t}\dd t\nonumber\\
+&\approx &\frac{1}{T}\sum_{n=0}^{N-1}x(T_s n)e^{-j 2\pi \frac{k}{T} T_s n}T_s,\nonumber\\
+&=&\frac{1}{N}\sum_{n=0}^{N-1}x(T_s n)e^{-j 2\pi \frac{k}{N} n},\nonumber\\
+&=&X[k].\label{eqn:Xk_approx_ck}
+\end{IEEEeqnarray}
+
+
+How well is the approximation? To answer this question, we can examine the continuous form of $x[n]$. Suppose the continuous form of $x[n]$ is $x_d(t)$. We have
+\begin{equation}
+x_d(t) = x(t)\frac{1}{T_s}\mathrm{III}(\frac{t}{T_s}).
+\end{equation}
+Since $x_d(t)$, $x(t)$, and $({1}/{T_s})\mathrm{III}({t}/{T_s})$ are all continuous-time functions with the same period $T$, we can take FS on them. It should be noted that $({1}/{T_s})\mathrm{III}({t}/{T_s})$ is a periodic function with a fundamental period of $T_s$. However, it also has a period of $T = N T_s$. When we take its FS, we should use the period of $T$. The FS of $({1}/{T_s})\mathrm{III}({t}/{T_s})$ with a period of $T$ is
+\begin{equation*}
+\frac{1}{T}\sum_{n=0}^{N-1}e^{-j 2\pi \frac{k}{N} n}.
+\end{equation*}
+The FS of $x_d(t)$ is $X[k]/T_s$ and the FS of $x(t)$ is $c[k]$. According to the multiplication theory of FS, we have
+\begin{equation}
+\frac{X[k]}{T_s} = c[k] * \frac{1}{T}\sum_{n=0}^{N-1}e^{-j 2\pi \frac{k}{N} n}.
+\end{equation}
+After some manipulation, we can obtain
+\begin{equation}
+X[k] = \sum_{n=-\infty}^{\infty}c[k-n N].
+\end{equation}
+We see that $X[k]$ is a periodic extension of $c[k]$ with a period of $N$. The accuracy of Eq. (\ref{eqn:Xk_approx_ck}) is determined by the overlap. If $c[k]$ is zero for $|k|>N/2$, $X[k]$ is then precisely equal to $c[k]$ for $|k| < N/2$. 
+
+
+
+
+\begin{thebibliography}{10}
+
+\bibitem{ref:Bracewell}
+R. N. Bracewell, ''The discrete Fourier transform and the FFT'' in \emph{The Fourier Transform and its Applications}, 3ed. Singapore: McGraw-Hill, 2000.
+
+\bibitem{ref:Lindegren}
+L. Lindegren. \emph{The Continuous and Discrete Fourier Transforms} [Online]. Available: http://www.fysik.lu.se/fileadmin/fysikportalen/UDIF/Bilder/
+The\_ continuous\_ and\_ discrete\_ Fourier\_ transforms.pdf
+
+\bibitem{ref:Tjoa}
+S. K. Tjoa. (2009, Nov. 19). \emph{Complementary Notes for Signals and Systems by Alan V. Oppenheim and Alan S. Willsky, Second Edition} [Online]. Available: https://stevetjoa.com/static/notes322\_ 20091119.pdf
+
+\bibitem{ref:Fernsanz}
+Fernsanz. (2013, Mar. 23). \emph{Discrete Time Fourier Transform in Relation with Continuous Time Fourier Transform} [Online]. Available: http://planetmath.org/sites/default/files/texpdf/40050.pdf
+
+\bibitem{ref:wfft2016}
+Wolfram Research. ``FourierTransform'' in \emph{Wolfram Language and System Documentation Center} [Online]. Available: https://reference.
+wolfram.com/language/ref/FourierTransform.html
+
+\bibitem{ref:benedetto1997}
+J. J. Benedetto and G. Zimmermann, ''Sampling multipliers and the Poisson summation formula'', \emph{The Journal of Fourier Analysis and Applications} , vol. 3, no. 5, 1997, pp. 505–523.
+
+\bibitem{ref:romberg2016_1}
+J. K. Romberg, ''Signal discretization using basis decompositions,'' \emph{Lecture Notes of ECE6250}, pp. 16-17, Aug., 2016.
+
+\bibitem{ref:brigham1988}
+E. O. Brigham, ''The discrete Fourier transform'' in \emph{The Fast Fourier Transform and Its Applications}. Englewood Cliffs, NJ: Prentice Hall, 1988.
+
+\bibitem{ref:matlab_fft}
+MathWorks. ``Fast Fourier transform'' in \emph{MathWorks Documentation} [Online]. Available: https://www.mathworks.com/help/matlab/
+ref/fft.html
+
+\end{thebibliography}
+
+\end{document}
